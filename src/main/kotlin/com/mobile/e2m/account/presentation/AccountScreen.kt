@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.mobile.e2m.account.navigation.accountNavGraph
 import com.mobile.e2m.core.ui.R
 import com.mobile.e2m.core.ui.navigation.route.DestinationRoute.AccountRoute
 
@@ -99,6 +100,8 @@ fun AccountScreen(
             )
         },
     ) {
-
+        accountNavGraph(
+            navController = navController
+        )
     }
 }
