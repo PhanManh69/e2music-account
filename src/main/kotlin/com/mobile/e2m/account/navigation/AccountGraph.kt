@@ -3,6 +3,8 @@ package com.mobile.e2m.account.navigation
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import com.mobile.e2m.account.presentation.begin.beginDestination
+import com.mobile.e2m.account.presentation.login.goToLogin
+import com.mobile.e2m.account.presentation.login.loginDestination
 import com.mobile.e2m.account.presentation.started.startedDestination
 import com.mobile.e2m.core.ui.navigation.route.DestinationRoute.AccountRoute
 
@@ -19,7 +21,9 @@ fun NavGraphBuilder.accountNavGraph(
 
     startedDestination(
         goToLogin = {
-//            navController.goToLogin()
+            navController.goToLogin()
         }
     )
+
+    loginDestination()
 }
