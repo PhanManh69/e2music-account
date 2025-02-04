@@ -35,20 +35,16 @@ import com.mobile.e2m.core.ui.composable.E2MButton
 import com.mobile.e2m.core.ui.composable.E2MButtonStyle.Gradient
 import com.mobile.e2m.core.ui.composable.E2MHeader
 import com.mobile.e2m.core.ui.composable.E2MScaffold
+import com.mobile.e2m.core.ui.composable.debounceClickable
 import com.mobile.e2m.core.ui.theme.E2MTheme
 
 @Composable
 internal fun LoginScreen(
     goToForgotPassword: () -> Unit = { },
 ) {
-    var isClickedForgotPassword = true
-
     LoginScaffold(
         forgotPasswordOnClick = {
-            if (isClickedForgotPassword) {
-                isClickedForgotPassword = false
-                goToForgotPassword()
-            }
+            goToForgotPassword()
         }
     )
 }
@@ -147,11 +143,7 @@ private fun LoginContent(
                 Spacer(modifier = Modifier.weight(1f))
 
                 Text(
-                    modifier = Modifier
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) { forgotPasswordOnClick() },
+                    modifier = Modifier.debounceClickable { forgotPasswordOnClick() },
                     text = getString().passwordRecoveryTxt,
                     style = style.base.bold,
                     color = color.text.white,

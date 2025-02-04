@@ -1,7 +1,5 @@
 package com.mobile.e2m.account.presentation.passwordRecovery.forgotPassword
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,8 +32,9 @@ import com.mobile.e2m.account.presentation.getString
 import com.mobile.e2m.core.ui.composable.E2MButton
 import com.mobile.e2m.core.ui.composable.E2MButtonStyle.Gradient
 import com.mobile.e2m.core.ui.composable.E2MHeader
-import com.mobile.e2m.core.ui.composable.E2MIdentityPasscode
+import com.mobile.e2m.core.ui.composable.inputField.E2MIdentityPasscode
 import com.mobile.e2m.core.ui.composable.E2MScaffold
+import com.mobile.e2m.core.ui.composable.debounceClickable
 import com.mobile.e2m.core.ui.composable.inputField.E2MTextField
 import com.mobile.e2m.core.ui.theme.E2MTheme
 import org.koin.androidx.compose.koinViewModel
@@ -78,10 +77,7 @@ private fun ForgotPasswordScaffold(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-            ) { focusManager.clearFocus() }
+            .debounceClickable { focusManager.clearFocus() }
     ) {
         AsyncImage(
             modifier = Modifier.fillMaxSize(),
@@ -153,10 +149,7 @@ private fun ForgotPasswordContent(
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) { sendOtpOnClick() },
+                        .debounceClickable { sendOtpOnClick() },
                     text = it,
                     style = style.base.bold,
                     color = color.text.white,

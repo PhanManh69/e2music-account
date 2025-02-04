@@ -36,6 +36,7 @@ import com.mobile.e2m.core.ui.composable.E2MButton
 import com.mobile.e2m.core.ui.composable.E2MButtonStyle.Gradient
 import com.mobile.e2m.core.ui.composable.E2MHeader
 import com.mobile.e2m.core.ui.composable.E2MScaffold
+import com.mobile.e2m.core.ui.composable.debounceClickable
 import com.mobile.e2m.core.ui.composable.inputField.E2MTextField
 import com.mobile.e2m.core.ui.theme.E2MTheme
 
@@ -61,10 +62,7 @@ private fun ResetPasswordScaffold(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-            ) { focusManager.clearFocus() }
+            .debounceClickable { focusManager.clearFocus() }
     ) {
         AsyncImage(
             modifier = Modifier.fillMaxSize(),
