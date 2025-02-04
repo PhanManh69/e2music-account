@@ -11,10 +11,12 @@ internal fun NavController.goToForgotPassword() {
 
 internal fun NavGraphBuilder.forgotPasswordDestination(
     goBack: () -> Unit = { },
+    goToResetPassword: () -> Unit = { },
 ) {
     composable(AccountRoute.FORGOT_PASSWORD) {
         ForgotPasswordScreen(
             goBack = { goBack() },
+            goToResetPassword = { goToResetPassword() },
         )
     }
 }

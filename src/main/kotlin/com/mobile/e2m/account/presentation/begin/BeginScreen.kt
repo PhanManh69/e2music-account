@@ -28,7 +28,7 @@ internal fun BeginScreen(
 }
 
 @Composable
-fun BeginScaffold(
+private fun BeginScaffold(
     modifier: Modifier = Modifier,
     goToStarted: () -> Unit = { },
 ) {

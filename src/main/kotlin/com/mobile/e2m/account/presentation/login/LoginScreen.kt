@@ -54,7 +54,7 @@ internal fun LoginScreen(
 }
 
 @Composable
-internal fun LoginScaffold(
+private fun LoginScaffold(
     modifier: Modifier = Modifier,
     loginOnClick: () -> Unit = { },
     loginGoogleOnClick: () -> Unit = { },
@@ -105,7 +105,7 @@ internal fun LoginScaffold(
 }
 
 @Composable
-internal fun LoginContent(
+private fun LoginContent(
     modifier: Modifier = Modifier,
     loginOnClick: () -> Unit = { },
     loginGoogleOnClick: () -> Unit = { },

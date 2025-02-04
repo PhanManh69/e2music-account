@@ -42,6 +42,9 @@ data class GetStrings(
     val sendToEmailTxt: String,
     val resendCodeLaterTxt: String,
     val confirmTxt: String,
+    val resetPasswordTxt: String,
+    val enterNewPasswordTxt: String,
+    val enterConfirmPasswordTxt: String,
 ) {
     companion object {
         @Composable
@@ -68,6 +71,9 @@ data class GetStrings(
             sendToEmailTxt = context.getString(R.string.sendToEmail),
             resendCodeLaterTxt = context.getString(R.string.resendCodeLater),
             confirmTxt = context.getString(R.string.confirm),
+            resetPasswordTxt = context.getString(R.string.resetPassword),
+            enterNewPasswordTxt = context.getString(R.string.enterNewPassword),
+            enterConfirmPasswordTxt = context.getString(R.string.enterConfirmPassword),
         )
     }
 }

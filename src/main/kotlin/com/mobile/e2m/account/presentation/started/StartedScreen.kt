@@ -45,7 +45,7 @@ internal fun StartedScreen(
 }
 
 @Composable
-internal fun StartedScaffold(
+private fun StartedScaffold(
     modifier: Modifier = Modifier,
     startOnClick: () -> Unit = { },
     loginOnClick: () -> Unit = { },
@@ -82,7 +82,7 @@ internal fun StartedScaffold(
 }
 
 @Composable
-fun StartedContent(
+private fun StartedContent(
     modifier: Modifier = Modifier,
     startOnClick: () -> Unit = { },
     loginOnClick: () -> Unit = { },
