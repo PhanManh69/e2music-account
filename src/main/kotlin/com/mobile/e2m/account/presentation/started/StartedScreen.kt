@@ -45,12 +45,11 @@ internal fun StartedScreen(
 }
 
 @Composable
-internal fun StartedScaffold(
+private fun StartedScaffold(
     modifier: Modifier = Modifier,
     startOnClick: () -> Unit = { },
     loginOnClick: () -> Unit = { },
 ) {
-    val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
@@ -62,9 +61,7 @@ internal fun StartedScaffold(
     }
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(bottom = bottomPadding),
+        modifier = modifier.fillMaxSize()
     ) {
         AsyncImage(
             modifier = Modifier.fillMaxSize(),
@@ -85,11 +82,12 @@ internal fun StartedScaffold(
 }
 
 @Composable
-fun StartedContent(
+private fun StartedContent(
     modifier: Modifier = Modifier,
     startOnClick: () -> Unit = { },
     loginOnClick: () -> Unit = { },
 ) {
+    val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     val style = E2MTheme.typography
     val color = E2MTheme.alias.color
     val size = E2MTheme.alias.size
@@ -126,7 +124,9 @@ fun StartedContent(
         Spacer(modifier = Modifier.height(size.spacing.large))
 
         E2MButton(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = bottomPadding),
             title = getString().loginTxt,
             onClick = { loginOnClick() },
         )

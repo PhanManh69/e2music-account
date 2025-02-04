@@ -38,6 +38,13 @@ data class GetStrings(
     val loginWithAppleIDTxt: String,
     val noAccountTxt: String,
     val registerTxt: String,
+    val forgotPasswordTxt: String,
+    val sendToEmailTxt: String,
+    val resendCodeLaterTxt: String,
+    val confirmTxt: String,
+    val resetPasswordTxt: String,
+    val enterNewPasswordTxt: String,
+    val enterConfirmPasswordTxt: String,
 ) {
     companion object {
         @Composable
@@ -60,6 +67,13 @@ data class GetStrings(
             loginWithAppleIDTxt = context.getString(R.string.loginWithAppleID),
             noAccountTxt = context.getString(R.string.noAccount),
             registerTxt = context.getString(R.string.register),
+            forgotPasswordTxt = context.getString(R.string.forgotPassword),
+            sendToEmailTxt = context.getString(R.string.sendToEmail),
+            resendCodeLaterTxt = context.getString(R.string.resendCodeLater),
+            confirmTxt = context.getString(R.string.confirm),
+            resetPasswordTxt = context.getString(R.string.resetPassword),
+            enterNewPasswordTxt = context.getString(R.string.enterNewPassword),
+            enterConfirmPasswordTxt = context.getString(R.string.enterConfirmPassword),
         )
     }
 }
