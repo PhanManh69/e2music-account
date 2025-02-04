@@ -5,6 +5,8 @@ import androidx.navigation.NavHostController
 import com.mobile.e2m.account.presentation.begin.beginDestination
 import com.mobile.e2m.account.presentation.login.goToLogin
 import com.mobile.e2m.account.presentation.login.loginDestination
+import com.mobile.e2m.account.presentation.passwordRecovery.forgotPassword.forgotPasswordDestination
+import com.mobile.e2m.account.presentation.passwordRecovery.forgotPassword.goToForgotPassword
 import com.mobile.e2m.account.presentation.started.startedDestination
 import com.mobile.e2m.core.ui.navigation.route.DestinationRoute.AccountRoute
 
@@ -25,5 +27,15 @@ fun NavGraphBuilder.accountNavGraph(
         }
     )
 
-    loginDestination()
+    loginDestination(
+        goToForgotPassword = {
+            navController.goToForgotPassword()
+        }
+    )
+
+    forgotPasswordDestination(
+        goBack = {
+            navController.popBackStack()
+        }
+    )
 }

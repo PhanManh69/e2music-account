@@ -9,8 +9,12 @@ internal fun NavController.goToLogin() {
     this.navigate(route = AccountRoute.LOGIN)
 }
 
-internal fun NavGraphBuilder.loginDestination() {
+internal fun NavGraphBuilder.loginDestination(
+    goToForgotPassword: () -> Unit = { },
+) {
     composable(AccountRoute.LOGIN) {
-        LoginScreen()
+        LoginScreen(
+            goToForgotPassword = { goToForgotPassword() },
+        )
     }
 }
