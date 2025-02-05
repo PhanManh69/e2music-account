@@ -1,15 +1,13 @@
 package com.mobile.e2m.account.presentation.login.composable
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.mobile.e2m.account.presentation.getString
+import com.mobile.e2m.core.ui.composable.debounceClickable
 import com.mobile.e2m.core.ui.theme.E2MTheme
 
 @Composable
@@ -32,11 +30,7 @@ internal fun LoginNoAccountRegister(
         )
 
         Text(
-            modifier = Modifier
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                ) { registerOnClick() },
+            modifier = Modifier.debounceClickable { registerOnClick() },
             text = getString().registerTxt,
             style = style.base.bold,
             color = color.text.blur2Light,
