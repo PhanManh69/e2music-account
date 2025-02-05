@@ -43,6 +43,12 @@ data class GetStrings(
     val resetPasswordTxt: String,
     val enterNewPasswordTxt: String,
     val enterConfirmPasswordTxt: String,
+    val enterUsernameTxt: String,
+    val enterFullnameTxt: String,
+    val enterEmailTxt: String,
+    val authenticateOtpTxt: String,
+    val contentAuthenticateOtp1Txt: String,
+    val contentAuthenticateOtp2Txt: String,
 ) {
     companion object {
         @Composable
@@ -70,6 +76,12 @@ data class GetStrings(
             resetPasswordTxt = context.getString(R.string.resetPassword),
             enterNewPasswordTxt = context.getString(R.string.enterNewPassword),
             enterConfirmPasswordTxt = context.getString(R.string.enterConfirmPassword),
+            enterUsernameTxt = context.getString(R.string.enterUsername),
+            enterFullnameTxt = context.getString(R.string.enterFullname),
+            enterEmailTxt = context.getString(R.string.enterEmail),
+            authenticateOtpTxt = context.getString(R.string.authenticateOtp),
+            contentAuthenticateOtp1Txt = context.getString(R.string.contentAuthenticateOtp1),
+            contentAuthenticateOtp2Txt = context.getString(R.string.contentAuthenticateOtp2),
         )
     }
 }
@@ -85,7 +97,7 @@ fun AccountScreen(
 ) {
     NavHost(
         navController = navController,
-        startDestination = AccountRoute.BEGIN,
+        startDestination = AccountRoute.REGISTER,
         modifier = Modifier
             .consumeWindowInsets(WindowInsets.navigationBars.only(WindowInsetsSides.Vertical))
             .consumeWindowInsets(WindowInsets.ime),
