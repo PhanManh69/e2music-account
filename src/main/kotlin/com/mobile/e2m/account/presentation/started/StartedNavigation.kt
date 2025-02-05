@@ -6,7 +6,9 @@ import androidx.navigation.compose.composable
 import com.mobile.e2m.core.ui.navigation.route.DestinationRoute.AccountRoute
 
 internal fun NavController.goToStarted() {
-    this.navigate(route = AccountRoute.STARTED)
+    this.navigate(route = AccountRoute.STARTED) {
+        popUpTo(AccountRoute.BEGIN) { inclusive = true }
+    }
 }
 
 internal fun NavGraphBuilder.startedDestination(

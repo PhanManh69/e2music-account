@@ -35,16 +35,21 @@ import com.mobile.e2m.core.ui.composable.E2MButton
 import com.mobile.e2m.core.ui.composable.E2MButtonStyle.Gradient
 import com.mobile.e2m.core.ui.composable.E2MHeader
 import com.mobile.e2m.core.ui.composable.E2MScaffold
-import com.mobile.e2m.core.ui.composable.debounceClickable
+import com.mobile.e2m.core.ui.composable.background.E2MBackgroundDark
 import com.mobile.e2m.core.ui.theme.E2MTheme
 
 @Composable
 internal fun LoginScreen(
     goToForgotPassword: () -> Unit = { },
 ) {
+    var isClickedForgotPassword = true
+
     LoginScaffold(
         forgotPasswordOnClick = {
-            goToForgotPassword()
+            if (isClickedForgotPassword) {
+                isClickedForgotPassword = false
+                goToForgotPassword()
+            }
         }
     )
 }
@@ -69,15 +74,7 @@ private fun LoginScaffold(
                 indication = null,
             ) { focusManager.clearFocus() }
     ) {
-        AsyncImage(
-            modifier = Modifier.fillMaxSize(),
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(R.raw.img_background_dark)
-                .decoderFactory(SvgDecoder.Factory())
-                .build(),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-        )
+        E2MBackgroundDark()
 
         E2MScaffold(
             topBar = {
@@ -143,7 +140,11 @@ private fun LoginContent(
                 Spacer(modifier = Modifier.weight(1f))
 
                 Text(
-                    modifier = Modifier.debounceClickable { forgotPasswordOnClick() },
+                    modifier = Modifier
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) { forgotPasswordOnClick() },
                     text = getString().passwordRecoveryTxt,
                     style = style.base.bold,
                     color = color.text.white,
