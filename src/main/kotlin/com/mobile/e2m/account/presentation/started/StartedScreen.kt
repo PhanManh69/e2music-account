@@ -50,16 +50,6 @@ private fun StartedScaffold(
     startOnClick: () -> Unit = { },
     loginOnClick: () -> Unit = { },
 ) {
-    val context = LocalContext.current
-
-    LaunchedEffect(Unit) {
-        val imageLoader = ImageLoader(context)
-        val request = ImageRequest.Builder(context)
-            .data(R.raw.img_background_dark)
-            .build()
-        imageLoader.enqueue(request)
-    }
-
     Box(
         modifier = modifier.fillMaxSize()
     ) {

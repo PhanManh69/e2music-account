@@ -3,7 +3,7 @@ package com.mobile.e2m.account.presentation.begin
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -13,9 +13,9 @@ import androidx.compose.ui.platform.LocalContext
 import coil3.ImageLoader
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
-import coil3.svg.SvgDecoder
+import coil3.request.crossfade
 import com.mobile.e2m.account.R
-import com.mobile.e2m.core.ui.theme.E2MTheme
+import com.mobile.e2m.core.ui.theme.BackgroundBegin
 import kotlinx.coroutines.delay
 
 @Composable
@@ -29,7 +29,6 @@ internal fun BeginScreen(
 
 @Composable
 private fun BeginScaffold(
-    modifier: Modifier = Modifier,
     goToStarted: () -> Unit = { },
 ) {
     val context = LocalContext.current
@@ -41,22 +40,22 @@ private fun BeginScaffold(
             .build()
         imageLoader.enqueue(request)
 
-        delay(1000)
+        delay(8000)
         goToStarted()
     }
 
     Box(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
-            .background(E2MTheme.alias.color.surface.backgroundDark)
+            .background(BackgroundBegin)
     ) {
         AsyncImage(
             modifier = Modifier
-                .size(E2MTheme.alias.size.icon.largeX)
+                .fillMaxWidth()
                 .align(Alignment.Center),
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(R.raw.img_logo_e2music)
-                .decoderFactory(SvgDecoder.Factory())
+            model = ImageRequest.Builder(context)
+                .data(R.raw.gif_logo_e2music)
+                .crossfade(true)
                 .build(),
             contentDescription = null,
             contentScale = ContentScale.Fit,

@@ -35,6 +35,7 @@ import com.mobile.e2m.core.ui.composable.E2MButton
 import com.mobile.e2m.core.ui.composable.E2MButtonStyle.Gradient
 import com.mobile.e2m.core.ui.composable.E2MHeader
 import com.mobile.e2m.core.ui.composable.E2MScaffold
+import com.mobile.e2m.core.ui.composable.background.E2MBackgroundDark
 import com.mobile.e2m.core.ui.theme.E2MTheme
 
 @Composable
@@ -73,15 +74,7 @@ private fun LoginScaffold(
                 indication = null,
             ) { focusManager.clearFocus() }
     ) {
-        AsyncImage(
-            modifier = Modifier.fillMaxSize(),
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(R.raw.img_background_dark)
-                .decoderFactory(SvgDecoder.Factory())
-                .build(),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-        )
+        E2MBackgroundDark()
 
         E2MScaffold(
             topBar = {

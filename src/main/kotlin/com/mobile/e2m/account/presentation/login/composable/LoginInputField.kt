@@ -31,7 +31,7 @@ internal fun LoginInputField(
 
     Column {
         E2MTextField(
-            value = enterAccountEmail.value,
+            initText = enterAccountEmail.value,
             onValueChange = { enterAccountEmail.value = it },
             placeholder = getString().enterAccountEmailTxt,
             keyboardOptions = KeyboardOptions(
@@ -43,7 +43,7 @@ internal fun LoginInputField(
         Spacer(modifier = Modifier.height(E2MTheme.alias.size.spacing.large))
 
         E2MTextField(
-            value = enterPassword.value,
+            initText = enterPassword.value,
             onValueChange = { enterPassword.value = it },
             placeholder = getString().enterPasswordTxt,
             iconId = if (isPasswordVisible) R.drawable.ic_hide_password else R.drawable.ic_display_password,

@@ -16,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,10 +33,12 @@ import com.mobile.e2m.account.presentation.getString
 import com.mobile.e2m.core.ui.composable.E2MButton
 import com.mobile.e2m.core.ui.composable.E2MButtonStyle.Gradient
 import com.mobile.e2m.core.ui.composable.E2MHeader
-import com.mobile.e2m.core.ui.composable.E2MIdentityPasscode
 import com.mobile.e2m.core.ui.composable.E2MScaffold
+import com.mobile.e2m.core.ui.composable.background.E2MBackgroundDark
+import com.mobile.e2m.core.ui.composable.inputField.E2MIdentityPasscode
 import com.mobile.e2m.core.ui.composable.inputField.E2MTextField
 import com.mobile.e2m.core.ui.theme.E2MTheme
+import com.mobile.e2m.core.ui.util.EventsEffect
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -49,26 +50,50 @@ internal fun ForgotPasswordScreen(
     val state by viewModel.stateFlow.collectAsState()
     val context = LocalContext.current
 
+    EventsEffect(viewModel) { event ->
+        when (event) {
+            ForgotPasswordEvent.GoToResetPasswordScreen -> goToResetPassword()
+        }
+    }
+
     ForgotPasswordScaffold(
+        emailAccount = state.emailAccount,
+        passcode = state.passcode,
+        emailAccountError = state.emailAccountError?.let { context.getString(it) },
+        passcodeError = state.passcodeError?.let { context.getString(it) },
+        sendOtpText = if (state.countdown > 0) {
+            "${context.getString(com.mobile.e2m.core.ui.R.string.resendCodeLater)} (${state.countdown}s)"
+        } else {
+            context.getString(state.sendOtpTextResId)
+        },
+        onEmailTyped = { value, _ ->
+            viewModel.trySendAction(ForgotPasswordAction.OnEmailTyped(value))
+        },
+        onPasscodeTyped = { value, _ ->
+            viewModel.trySendAction(ForgotPasswordAction.OnPasscodeTyped(value))
+        },
         goBack = { goBack() },
-        confirmOnClick = { goToResetPassword() },
+        confirmOnClick = {
+            viewModel.trySendAction(ForgotPasswordAction.ConfirmClick)
+        },
         sendOtpOnClick = {
             if (state.countdown == 0) {
                 viewModel.trySendAction(ForgotPasswordAction.SendOtpClick)
             }
         },
-        sendOtpText = if (state.countdown > 0) {
-            "${context.getString(com.mobile.e2m.core.ui.R.string.resendCodeLater)} (${state.countdown}s)"
-        } else {
-            context.getString(state.sendOtpTextResId)
-        }
     )
 }
 
 @Composable
 private fun ForgotPasswordScaffold(
     modifier: Modifier = Modifier,
+    emailAccount: String = "",
+    passcode: String = "",
+    emailAccountError: String? = null,
+    passcodeError: String? = null,
     sendOtpText: String? = null,
+    onEmailTyped: (String, String?) -> Unit = { _, _ -> },
+    onPasscodeTyped: (String, String?) -> Unit = { _, _ -> },
     goBack: () -> Unit = { },
     sendOtpOnClick: () -> Unit = { },
     confirmOnClick: () -> Unit = { },
@@ -83,15 +108,7 @@ private fun ForgotPasswordScaffold(
                 indication = null,
             ) { focusManager.clearFocus() }
     ) {
-        AsyncImage(
-            modifier = Modifier.fillMaxSize(),
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(R.raw.img_background_dark)
-                .decoderFactory(SvgDecoder.Factory())
-                .build(),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-        )
+        E2MBackgroundDark()
 
         E2MScaffold(
             topBar = {
@@ -103,7 +120,13 @@ private fun ForgotPasswordScaffold(
             },
             content = {
                 ForgotPasswordContent(
+                    emailAccount = emailAccount,
+                    passcode = passcode,
+                    emailAccountError = emailAccountError,
+                    passcodeError = passcodeError,
                     sendOtpText = sendOtpText,
+                    onEmailTyped = onEmailTyped,
+                    onPasscodeTyped = onPasscodeTyped,
                     sendOtpOnClick = { sendOtpOnClick() },
                     confirmOnClick = { confirmOnClick() },
                 )
@@ -115,12 +138,17 @@ private fun ForgotPasswordScaffold(
 @Composable
 private fun ForgotPasswordContent(
     modifier: Modifier = Modifier,
+    emailAccount: String = "",
+    passcode: String = "",
+    emailAccountError: String? = null,
+    passcodeError: String? = null,
     sendOtpText: String? = null,
+    onEmailTyped: (String, String?) -> Unit = { _, _ -> },
+    onPasscodeTyped: (String, String?) -> Unit = { _, _ ->},
     sendOtpOnClick: () -> Unit = { },
     confirmOnClick: () -> Unit = { },
 ) {
     val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-    val enterAccountEmail = remember { mutableStateOf("") }
     val style = E2MTheme.typography
     val color = E2MTheme.alias.color
     val size = E2MTheme.alias.size
@@ -136,9 +164,10 @@ private fun ForgotPasswordContent(
             verticalArrangement = Arrangement.spacedBy(size.spacing.largeX),
         ) {
             E2MTextField(
-                value = enterAccountEmail.value,
-                onValueChange = { enterAccountEmail.value = it },
+                initText = emailAccount,
+                onValueChange = { onEmailTyped(it, emailAccountError) },
                 placeholder = getString().enterAccountEmailTxt,
+                caption = emailAccountError,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Next
@@ -146,6 +175,9 @@ private fun ForgotPasswordContent(
             )
 
             E2MIdentityPasscode(
+                initPasscode = passcode,
+                onPasscodeChange = { onPasscodeTyped(it, passcodeError) },
+                caption = passcodeError,
                 doneOnClick = { confirmOnClick() }
             )
 

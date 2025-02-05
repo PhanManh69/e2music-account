@@ -9,6 +9,7 @@ import com.mobile.e2m.account.presentation.passwordRecovery.forgotPassword.forgo
 import com.mobile.e2m.account.presentation.passwordRecovery.forgotPassword.goToForgotPassword
 import com.mobile.e2m.account.presentation.passwordRecovery.resetPassword.goToResetPassword
 import com.mobile.e2m.account.presentation.passwordRecovery.resetPassword.resetPasswordDestination
+import com.mobile.e2m.account.presentation.started.goToStarted
 import com.mobile.e2m.account.presentation.started.startedDestination
 import com.mobile.e2m.core.ui.navigation.route.DestinationRoute.AccountRoute
 
@@ -17,9 +18,7 @@ fun NavGraphBuilder.accountNavGraph(
 ) {
     beginDestination(
         goToStarted = {
-            navController.navigate(AccountRoute.STARTED) {
-                popUpTo(AccountRoute.BEGIN) { inclusive = true }
-            }
+            navController.goToStarted()
         }
     )
 
@@ -49,7 +48,9 @@ fun NavGraphBuilder.accountNavGraph(
             navController.popBackStack()
         },
         goToLogin = {
-            navController.goToLogin()
+            navController.goToLogin(
+                AccountRoute.FORGOT_PASSWORD, AccountRoute.LOGIN
+            )
         }
     )
 }
