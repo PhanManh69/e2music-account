@@ -11,10 +11,12 @@ internal fun NavController.goToRegister() {
 
 internal fun NavGraphBuilder.registerDestination(
     goBack: () -> Unit = { },
+    goToRegistrationSuccess: () -> Unit = { },
 ) {
     composable(AccountRoute.REGISTER) {
         RegisterScreen(
             goBack = { goBack() },
+            goToRegistrationSuccess = { goToRegistrationSuccess() }
         )
     }
 }

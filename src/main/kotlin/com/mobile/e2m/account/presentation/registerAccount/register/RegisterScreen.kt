@@ -43,6 +43,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 internal fun RegisterScreen(
     goBack: () -> Unit = { },
+    goToRegistrationSuccess: () -> Unit = { },
     viewModel: RegisterViewModel = koinViewModel()
 ) {
     val state by viewModel.stateFlow.collectAsState()
@@ -51,6 +52,11 @@ internal fun RegisterScreen(
 
     EventsEffect(viewModel) { event ->
         when (event) {
+            is RegisterEvent.GoToRegistrationSuccess -> {
+                openDialog.value = state.openDialog
+                goToRegistrationSuccess()
+            }
+
             is RegisterEvent.OpenOtpDialog -> {
                 openDialog.value = event.openDialog
             }
@@ -107,7 +113,9 @@ internal fun RegisterScreen(
                 viewModel.trySendAction(RegisterAction.SendOtpClick)
             }
         },
-        confirmOnClick = { openDialog.value = false },
+        confirmOnClick = {
+            viewModel.trySendAction(RegisterAction.ConfirmClick(openDialog = state.openDialog))
+        },
     )
 }
 

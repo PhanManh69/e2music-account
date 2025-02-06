@@ -49,6 +49,8 @@ data class GetStrings(
     val authenticateOtpTxt: String,
     val contentAuthenticateOtp1Txt: String,
     val contentAuthenticateOtp2Txt: String,
+    val registrationSuccessfulTxt: String,
+    val contentRegistrationSuccessfulTxt: String,
 ) {
     companion object {
         @Composable
@@ -82,6 +84,8 @@ data class GetStrings(
             authenticateOtpTxt = context.getString(R.string.authenticateOtp),
             contentAuthenticateOtp1Txt = context.getString(R.string.contentAuthenticateOtp1),
             contentAuthenticateOtp2Txt = context.getString(R.string.contentAuthenticateOtp2),
+            registrationSuccessfulTxt = context.getString(R.string.registrationSuccessful),
+            contentRegistrationSuccessfulTxt = context.getString(R.string.contentRegistrationSuccessful),
         )
     }
 }
@@ -97,7 +101,7 @@ fun AccountScreen(
 ) {
     NavHost(
         navController = navController,
-        startDestination = AccountRoute.REGISTER,
+        startDestination = AccountRoute.BEGIN,
         modifier = Modifier
             .consumeWindowInsets(WindowInsets.navigationBars.only(WindowInsetsSides.Vertical))
             .consumeWindowInsets(WindowInsets.ime),

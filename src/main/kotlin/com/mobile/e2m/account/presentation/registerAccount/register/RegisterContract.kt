@@ -4,6 +4,7 @@ import com.mobile.e2m.core.ui.R
 
 sealed interface RegisterAction {
     data object SendOtpClick : RegisterAction
+    data class ConfirmClick(val openDialog: Boolean) : RegisterAction
     data class RegisterClick(val openDialog: Boolean) : RegisterAction
     data class OnUsernameTyped(val username: String) : RegisterAction
     data class OnFullnameTyped(val fullname: String) : RegisterAction
@@ -30,8 +31,10 @@ data class RegisterState(
     val newPasswordError: Int? = null,
     val confirmPasswordError: Int? = null,
     val passcodeError: Int? = null,
+    val openDialog: Boolean = true
 )
 
 sealed interface RegisterEvent {
+    data class GoToRegistrationSuccess(val openDialog: Boolean) : RegisterEvent
     data class OpenOtpDialog(val openDialog: Boolean) : RegisterEvent
 }

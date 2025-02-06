@@ -1,6 +1,5 @@
 package com.mobile.e2m.account.presentation.registerAccount.register
 
-import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.viewModelScope
 import com.mobile.e2m.core.ui.R
@@ -19,6 +18,7 @@ class RegisterViewModel : E2MBaseViewModel<RegisterState, RegisterEvent, Registe
     override fun handleAction(action: RegisterAction) {
         when (action) {
             RegisterAction.SendOtpClick -> handleSendOtpClick()
+            is RegisterAction.ConfirmClick -> handleNextScreenClick(action.openDialog)
             is RegisterAction.RegisterClick -> handleRegisterClick(action.openDialog)
             is RegisterAction.OnUsernameTyped -> handleOnUsernameTyped(action.username)
             is RegisterAction.OnFullnameTyped -> handleOnFullnameTyped(action.fullname)
@@ -47,7 +47,7 @@ class RegisterViewModel : E2MBaseViewModel<RegisterState, RegisterEvent, Registe
                         fullnameError = null,
                         emailError = null,
                         newPasswordError = null,
-                        confirmPasswordError = null
+                        confirmPasswordError = null,
                     )
                 }
                 return@launch
@@ -59,7 +59,7 @@ class RegisterViewModel : E2MBaseViewModel<RegisterState, RegisterEvent, Registe
                         fullnameError = fullnameMessage,
                         emailError = null,
                         newPasswordError = null,
-                        confirmPasswordError = null
+                        confirmPasswordError = null,
                     )
                 }
                 return@launch
@@ -70,7 +70,7 @@ class RegisterViewModel : E2MBaseViewModel<RegisterState, RegisterEvent, Registe
                     it.copy(
                         emailError = emailMessage,
                         newPasswordError = null,
-                        confirmPasswordError = null
+                        confirmPasswordError = null,
                     )
                 }
                 return@launch
@@ -92,17 +92,48 @@ class RegisterViewModel : E2MBaseViewModel<RegisterState, RegisterEvent, Registe
 
             mutableStateFlow.update {
                 it.copy(
+                    passcode = "",
                     usernameError = null,
                     fullnameError = null,
                     emailError = null,
                     newPasswordError = null,
-                    confirmPasswordError = null
+                    confirmPasswordError = null,
+                    passcodeError = null,
                 )
             }
 
             sendEvent(RegisterEvent.OpenOtpDialog(openDialog = openDialog))
 
             handleSendOtpClick()
+        }
+    }
+
+    private fun handleNextScreenClick(openDialog: Boolean) {
+        viewModelScope.launch {
+            val verificationCode = "12345"
+            val (passcodeMessage, isPasscodeValid) = checkPasscode(
+                mutableStateFlow.value.passcode,
+                verificationCode
+            )
+
+            if (!isPasscodeValid) {
+                mutableStateFlow.update {
+                    it.copy(
+                        passcodeError = passcodeMessage,
+                        openDialog = true,
+                    )
+                }
+                return@launch
+            }
+
+            mutableStateFlow.update {
+                it.copy(
+                    passcodeError = null,
+                    openDialog = false,
+                )
+            }
+
+            sendEvent(RegisterEvent.GoToRegistrationSuccess(openDialog = openDialog))
         }
     }
 
@@ -123,8 +154,6 @@ class RegisterViewModel : E2MBaseViewModel<RegisterState, RegisterEvent, Registe
             )
         }
     }
-
-
 
     private fun handleOnEmailTyped(email: String) {
         mutableStateFlow.update {
@@ -286,6 +315,18 @@ class RegisterViewModel : E2MBaseViewModel<RegisterState, RegisterEvent, Registe
             !newPassword.equals(
                 confirmPassword, ignoreCase = false
             ) -> R.string.errorWrongResetPassword to false
+
+            else -> null to true
+        }
+    }
+
+    private fun checkPasscode(passcode: String, verificationCode: String): Pair<Int?, Boolean> {
+        return when {
+            passcode.isBlank() -> R.string.errorEmptyPasscode to false
+            !verificationCode.equals(
+                passcode,
+                ignoreCase = true
+            ) -> R.string.errorWrongPasscode to false
 
             else -> null to true
         }
