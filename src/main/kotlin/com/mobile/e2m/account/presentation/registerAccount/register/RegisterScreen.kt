@@ -1,4 +1,4 @@
-package com.mobile.e2m.account.presentation.passwordRecovery.resetPassword
+package com.mobile.e2m.account.presentation.registerAccount.register
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -29,6 +29,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.mobile.e2m.account.R
 import com.mobile.e2m.account.presentation.getString
+import com.mobile.e2m.account.presentation.registerAccount.register.composable.RegisterAuthenticateOtp
 import com.mobile.e2m.core.ui.composable.E2MButton
 import com.mobile.e2m.core.ui.composable.E2MButtonStyle.Gradient
 import com.mobile.e2m.core.ui.composable.E2MHeader
@@ -40,49 +41,104 @@ import com.mobile.e2m.core.ui.util.EventsEffect
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-internal fun ResetPasswordScreen(
+internal fun RegisterScreen(
     goBack: () -> Unit = { },
-    goToLogin: () -> Unit = { },
-    viewModel: ResetPasswordViewModel = koinViewModel()
+    goToRegistrationSuccess: () -> Unit = { },
+    viewModel: RegisterViewModel = koinViewModel()
 ) {
     val state by viewModel.stateFlow.collectAsState()
     val context = LocalContext.current
+    val openDialog = remember { mutableStateOf(false) }
 
     EventsEffect(viewModel) { event ->
         when (event) {
-            ResetPasswordEvent.GoToLoginScreen -> goToLogin()
+            is RegisterEvent.GoToRegistrationSuccess -> {
+                openDialog.value = state.openDialog
+                goToRegistrationSuccess()
+            }
+
+            is RegisterEvent.OpenOtpDialog -> {
+                openDialog.value = event.openDialog
+            }
         }
     }
 
-    ResetPasswordScaffold(
+    RegisterScaffold(
+        username = state.username,
+        fullname = state.fullname,
+        email = state.email,
         newPassword = state.newPassword,
         confirmPassword = state.confirmPassword,
+        usernameError = state.usernameError?.let { context.getString(it) },
+        fullnameError = state.fullnameError?.let { context.getString(it) },
+        emailError = state.emailError?.let { context.getString(it) },
         newPasswordError = state.newPasswordError?.let { context.getString(it) },
         confirmPasswordError = state.confirmPasswordError?.let { context.getString(it) },
+        onUsernameTyped = { value, _ ->
+            viewModel.trySendAction(RegisterAction.OnUsernameTyped(value))
+        },
+        onFullnameTyped = { value, _ ->
+            viewModel.trySendAction(RegisterAction.OnFullnameTyped(value))
+        },
+        onEmailTyped = { value, _ ->
+            viewModel.trySendAction(RegisterAction.OnEmailTyped(value))
+        },
         onNewPasswordTyped = { value, _ ->
-            viewModel.trySendAction(ResetPasswordAction.OnNewPasswordTyped(value))
+            viewModel.trySendAction(RegisterAction.OnNewPasswordTyped(value))
         },
         onConfirmPasswordTyped = { value, _ ->
-            viewModel.trySendAction(ResetPasswordAction.OnConfirmPasswordTyped(value))
+            viewModel.trySendAction(RegisterAction.OnConfirmPasswordTyped(value))
         },
         goBack = { goBack() },
-        loginOnClick = {
-            viewModel.trySendAction(ResetPasswordAction.ConfirmClick)
+        registerOnClick = {
+            viewModel.trySendAction(RegisterAction.RegisterClick(openDialog = true))
+        },
+    )
+
+    RegisterAuthenticateOtp(
+        email = state.email,
+        passcode = state.passcode,
+        passcodeError = state.passcodeError?.let { context.getString(it) },
+        openDialog = openDialog,
+        sendOtpText = if (state.countdown > 0) {
+            "${context.getString(com.mobile.e2m.core.ui.R.string.resendCodeLater)} (${state.countdown}s)"
+        } else {
+            context.getString(state.sendOtpTextResId)
+        },
+        onPasscodeTyped = { value, _ ->
+            viewModel.trySendAction(RegisterAction.OnPasscodeTyped(value))
+        },
+        sendOtpOnClick = {
+            if (state.countdown == 0) {
+                viewModel.trySendAction(RegisterAction.SendOtpClick)
+            }
+        },
+        confirmOnClick = {
+            viewModel.trySendAction(RegisterAction.ConfirmClick(openDialog = state.openDialog))
         },
     )
 }
 
 @Composable
-private fun ResetPasswordScaffold(
+private fun RegisterScaffold(
     modifier: Modifier = Modifier,
+    username: String = "",
+    fullname: String = "",
+    email: String = "",
     newPassword: String = "",
     confirmPassword: String = "",
+    usernameError: String? = null,
+    fullnameError: String? = null,
+    emailError: String? = null,
     newPasswordError: String? = null,
     confirmPasswordError: String? = null,
+    onUsernameTyped: (String, String?) -> Unit = { _, _ -> },
+    onFullnameTyped: (String, String?) -> Unit = { _, _ -> },
+    onEmailTyped: (String, String?) -> Unit = { _, _ -> },
     onNewPasswordTyped: (String, String?) -> Unit = { _, _ -> },
     onConfirmPasswordTyped: (String, String?) -> Unit = { _, _ -> },
     goBack: () -> Unit = { },
-    loginOnClick: () -> Unit = { },
+    registerOnClick: () -> Unit = { },
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -99,20 +155,29 @@ private fun ResetPasswordScaffold(
         E2MScaffold(
             topBar = {
                 E2MHeader(
-                    title = getString().resetPasswordTxt,
+                    title = getString().registerTxt,
                     iconId = R.drawable.ic_angle_left,
                     leadingIconOnClick = { goBack() }
                 )
             },
             content = {
-                ResetPasswordContent(
+                RegisterContent(
+                    username = username,
+                    fullname = fullname,
+                    email = email,
                     newPassword = newPassword,
                     confirmPassword = confirmPassword,
+                    usernameError = usernameError,
+                    fullnameError = fullnameError,
+                    emailError = emailError,
                     newPasswordError = newPasswordError,
                     confirmPasswordError = confirmPasswordError,
+                    onUsernameTyped = onUsernameTyped,
+                    onFullnameTyped = onFullnameTyped,
+                    onEmailTyped = onEmailTyped,
                     onNewPasswordTyped = onNewPasswordTyped,
                     onConfirmPasswordTyped = onConfirmPasswordTyped,
-                    loginOnClick = { loginOnClick() }
+                    registerOnClick = registerOnClick,
                 )
             }
         )
@@ -120,15 +185,24 @@ private fun ResetPasswordScaffold(
 }
 
 @Composable
-private fun ResetPasswordContent(
+private fun RegisterContent(
     modifier: Modifier = Modifier,
+    username: String = "",
+    fullname: String = "",
+    email: String = "",
     newPassword: String = "",
     confirmPassword: String = "",
+    usernameError: String? = null,
+    fullnameError: String? = null,
+    emailError: String? = null,
     newPasswordError: String? = null,
     confirmPasswordError: String? = null,
+    onUsernameTyped: (String, String?) -> Unit = { _, _ -> },
+    onFullnameTyped: (String, String?) -> Unit = { _, _ -> },
+    onEmailTyped: (String, String?) -> Unit = { _, _ -> },
     onNewPasswordTyped: (String, String?) -> Unit = { _, _ -> },
     onConfirmPasswordTyped: (String, String?) -> Unit = { _, _ -> },
-    loginOnClick: () -> Unit = { },
+    registerOnClick: () -> Unit = { },
 ) {
     val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     val size = E2MTheme.alias.size
@@ -146,6 +220,39 @@ private fun ResetPasswordContent(
             modifier = Modifier.padding(top = size.spacing.large5x),
             verticalArrangement = Arrangement.spacedBy(size.spacing.largeX),
         ) {
+            E2MTextField(
+                initText = username,
+                onValueChange = { onUsernameTyped(it, usernameError) },
+                placeholder = getString().enterUsernameTxt,
+                caption = usernameError,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                )
+            )
+
+            E2MTextField(
+                initText = fullname,
+                onValueChange = { onFullnameTyped(it, fullnameError) },
+                placeholder = getString().enterFullnameTxt,
+                caption = fullnameError,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                )
+            )
+
+            E2MTextField(
+                initText = email,
+                onValueChange = { onEmailTyped(it, emailError) },
+                placeholder = getString().enterEmailTxt,
+                caption = emailError,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                )
+            )
+
             E2MTextField(
                 initText = newPassword,
                 onValueChange = { onNewPasswordTyped(it, newPasswordError) },
@@ -177,7 +284,7 @@ private fun ResetPasswordContent(
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(
-                    onDone = { loginOnClick() }
+                    onDone = { registerOnClick() }
                 )
             )
         }
@@ -187,9 +294,9 @@ private fun ResetPasswordContent(
                 .fillMaxWidth()
                 .padding(bottom = bottomPadding)
                 .align(Alignment.BottomCenter),
-            title = getString().loginTxt,
+            title = getString().registerTxt,
             style = Gradient,
-            onClick = { loginOnClick() }
+            onClick = { registerOnClick() }
         )
     }
 }

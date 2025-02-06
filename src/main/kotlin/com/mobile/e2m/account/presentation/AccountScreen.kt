@@ -43,6 +43,14 @@ data class GetStrings(
     val resetPasswordTxt: String,
     val enterNewPasswordTxt: String,
     val enterConfirmPasswordTxt: String,
+    val enterUsernameTxt: String,
+    val enterFullnameTxt: String,
+    val enterEmailTxt: String,
+    val authenticateOtpTxt: String,
+    val contentAuthenticateOtp1Txt: String,
+    val contentAuthenticateOtp2Txt: String,
+    val registrationSuccessfulTxt: String,
+    val contentRegistrationSuccessfulTxt: String,
 ) {
     companion object {
         @Composable
@@ -70,6 +78,14 @@ data class GetStrings(
             resetPasswordTxt = context.getString(R.string.resetPassword),
             enterNewPasswordTxt = context.getString(R.string.enterNewPassword),
             enterConfirmPasswordTxt = context.getString(R.string.enterConfirmPassword),
+            enterUsernameTxt = context.getString(R.string.enterUsername),
+            enterFullnameTxt = context.getString(R.string.enterFullname),
+            enterEmailTxt = context.getString(R.string.enterEmail),
+            authenticateOtpTxt = context.getString(R.string.authenticateOtp),
+            contentAuthenticateOtp1Txt = context.getString(R.string.contentAuthenticateOtp1),
+            contentAuthenticateOtp2Txt = context.getString(R.string.contentAuthenticateOtp2),
+            registrationSuccessfulTxt = context.getString(R.string.registrationSuccessful),
+            contentRegistrationSuccessfulTxt = context.getString(R.string.contentRegistrationSuccessful),
         )
     }
 }

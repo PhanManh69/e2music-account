@@ -15,10 +15,12 @@ internal fun NavController.goToLogin(vararg popUpDestinations: String) {
 
 internal fun NavGraphBuilder.loginDestination(
     goToForgotPassword: () -> Unit = { },
+    goToRegister: () -> Unit = { },
 ) {
     composable(AccountRoute.LOGIN) {
         LoginScreen(
             goToForgotPassword = { goToForgotPassword() },
+            goToRegister = { goToRegister() },
         )
     }
 }

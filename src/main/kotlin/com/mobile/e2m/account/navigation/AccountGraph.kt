@@ -9,6 +9,10 @@ import com.mobile.e2m.account.presentation.passwordRecovery.forgotPassword.forgo
 import com.mobile.e2m.account.presentation.passwordRecovery.forgotPassword.goToForgotPassword
 import com.mobile.e2m.account.presentation.passwordRecovery.resetPassword.goToResetPassword
 import com.mobile.e2m.account.presentation.passwordRecovery.resetPassword.resetPasswordDestination
+import com.mobile.e2m.account.presentation.registerAccount.register.goToRegister
+import com.mobile.e2m.account.presentation.registerAccount.register.registerDestination
+import com.mobile.e2m.account.presentation.registerAccount.registrationSuccessful.goToRegistrationSuccessful
+import com.mobile.e2m.account.presentation.registerAccount.registrationSuccessful.registrationSuccessfulDestination
 import com.mobile.e2m.account.presentation.started.goToStarted
 import com.mobile.e2m.account.presentation.started.startedDestination
 import com.mobile.e2m.core.ui.navigation.route.DestinationRoute.AccountRoute
@@ -31,6 +35,9 @@ fun NavGraphBuilder.accountNavGraph(
     loginDestination(
         goToForgotPassword = {
             navController.goToForgotPassword()
+        },
+        goToRegister = {
+            navController.goToRegister()
         }
     )
 
@@ -50,6 +57,25 @@ fun NavGraphBuilder.accountNavGraph(
         goToLogin = {
             navController.goToLogin(
                 AccountRoute.FORGOT_PASSWORD, AccountRoute.LOGIN
+            )
+        }
+    )
+
+    registerDestination(
+        goBack = {
+            navController.popBackStack()
+        },
+        goToRegistrationSuccess = {
+            navController.goToRegistrationSuccessful(
+                AccountRoute.REGISTER
+            )
+        }
+    )
+
+    registrationSuccessfulDestination(
+        goToLogin = {
+            navController.goToLogin(
+                AccountRoute.REGISTRATION_SUCCESSFUL, AccountRoute.LOGIN
             )
         }
     )

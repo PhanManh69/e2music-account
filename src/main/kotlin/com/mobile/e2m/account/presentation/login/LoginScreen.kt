@@ -18,13 +18,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextAlign
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.svg.SvgDecoder
 import com.mobile.e2m.account.R
 import com.mobile.e2m.account.presentation.getString
 import com.mobile.e2m.account.presentation.login.composable.LoginInputField
@@ -36,20 +31,20 @@ import com.mobile.e2m.core.ui.composable.E2MButtonStyle.Gradient
 import com.mobile.e2m.core.ui.composable.E2MHeader
 import com.mobile.e2m.core.ui.composable.E2MScaffold
 import com.mobile.e2m.core.ui.composable.background.E2MBackgroundDark
+import com.mobile.e2m.core.ui.composable.debounceClickable
 import com.mobile.e2m.core.ui.theme.E2MTheme
 
 @Composable
 internal fun LoginScreen(
     goToForgotPassword: () -> Unit = { },
+    goToRegister: () -> Unit = { },
 ) {
-    var isClickedForgotPassword = true
-
     LoginScaffold(
         forgotPasswordOnClick = {
-            if (isClickedForgotPassword) {
-                isClickedForgotPassword = false
-                goToForgotPassword()
-            }
+            goToForgotPassword()
+        },
+        registerOnLick = {
+            goToRegister()
         }
     )
 }
@@ -140,11 +135,7 @@ private fun LoginContent(
                 Spacer(modifier = Modifier.weight(1f))
 
                 Text(
-                    modifier = Modifier
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) { forgotPasswordOnClick() },
+                    modifier = Modifier.debounceClickable { forgotPasswordOnClick() },
                     text = getString().passwordRecoveryTxt,
                     style = style.base.bold,
                     color = color.text.white,
