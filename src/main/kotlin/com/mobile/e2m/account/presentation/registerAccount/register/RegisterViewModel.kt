@@ -8,6 +8,8 @@ import com.mobile.e2m.account.domain.usecase.GetUsersUseCase
 import com.mobile.e2m.core.datasource.local.room.entity.UsersEntity
 import com.mobile.e2m.core.ui.R
 import com.mobile.e2m.core.ui.base.E2MBaseViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
@@ -15,6 +17,15 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Properties
+import javax.mail.Authenticator
+import javax.mail.Message
+import javax.mail.MessagingException
+import javax.mail.PasswordAuthentication
+import javax.mail.Session
+import javax.mail.Transport
+import javax.mail.internet.InternetAddress
+import javax.mail.internet.MimeMessage
 
 class RegisterViewModel(
     getUsersUseCase: GetUsersUseCase,
@@ -25,26 +36,23 @@ class RegisterViewModel(
     )
 ) {
 
-    private var countdownJob: Job? = null
     private var existingUsernames: List<String> = listOf()
     private var existingEmails: List<String> = listOf()
+    private var countdownJob: Job? = null
+    private var verificationCode: String = ""
 
     init {
-        getUsersUseCase
-            .invoke()
-            .map { usersList ->
-                val usernames = usersList.map { it.username }
-                val emails = usersList.map { it.email }
-                usernames to emails
-            }
-            .onEach { (usernames, emails) ->
-                existingUsernames = usernames
-                existingEmails = emails
+        getUsersUseCase.invoke().map { usersList ->
+            val usernames = usersList.map { it.username }
+            val emails = usersList.map { it.email }
+            usernames to emails
+        }.onEach { (usernames, emails) ->
+            existingUsernames = usernames
+            existingEmails = emails
 
-                Log.d("EManh Debug", "Existing Usernames: ${existingUsernames.joinToString(", ")}")
-                Log.d("EManh Debug", "Existing Emails: ${existingEmails.joinToString(", ")}")
-            }
-            .launchIn(viewModelScope)
+            Log.d("EManh Debug", "Existing Usernames: ${existingUsernames.joinToString(", ")}")
+            Log.d("EManh Debug", "Existing Emails: ${existingEmails.joinToString(", ")}")
+        }.launchIn(viewModelScope)
     }
 
     override fun handleAction(action: RegisterAction) {
@@ -155,10 +163,8 @@ class RegisterViewModel(
 
     private fun handleNextScreenClick(openDialog: Boolean) {
         viewModelScope.launch {
-            val verificationCode = "12345"
             val (passcodeMessage, isPasscodeValid) = checkPasscode(
-                mutableStateFlow.value.passcode,
-                verificationCode
+                mutableStateFlow.value.passcode, verificationCode
             )
 
             if (!isPasscodeValid) {
@@ -230,8 +236,7 @@ class RegisterViewModel(
                 )
             } else {
                 it.copy(
-                    email = email,
-                    emailError = null
+                    email = email, emailError = null
                 )
             }
         }
@@ -279,10 +284,17 @@ class RegisterViewModel(
                     )
                 }
             } else if (mutableStateFlow.value.countdown == 0) {
+                verificationCode = generateVerificationCode()
+
+                sendPasscodeToMail(
+                    email = mutableStateFlow.value.email,
+                    fullname = mutableStateFlow.value.fullname,
+                    verificationCode = verificationCode
+                )
+
                 mutableStateFlow.update {
                     it.copy(
-                        sendOtpTextResId = R.string.sendToEmail,
-                        countdown = 60
+                        sendOtpTextResId = R.string.sendToEmail, countdown = 60
                     )
                 }
 
@@ -301,8 +313,7 @@ class RegisterViewModel(
 
             mutableStateFlow.update {
                 it.copy(
-                    sendOtpTextResId = R.string.sendToEmail,
-                    countdown = 0
+                    sendOtpTextResId = R.string.sendToEmail, countdown = 0
                 )
             }
         }
@@ -375,11 +386,64 @@ class RegisterViewModel(
         return when {
             passcode.isBlank() -> R.string.errorEmptyPasscode to false
             !verificationCode.equals(
-                passcode,
-                ignoreCase = true
+                passcode, ignoreCase = true
             ) -> R.string.errorWrongPasscode to false
 
             else -> null to true
         }
+    }
+
+    private fun sendPasscodeToMail(email: String, fullname: String, verificationCode: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val senderEmail = "phankhacmanh6903@gmail.com"
+            val senderPassword = "kejx grwa fwxx zkcj"
+            val stringHost = "smtp.gmail.com"
+
+            val properties = Properties().apply {
+                put("mail.smtp.host", stringHost)
+                put("mail.smtp.port", "465")
+                put("mail.smtp.ssl.enable", "true")
+                put("mail.smtp.auth", "true")
+            }
+
+            val session = Session.getInstance(properties, object : Authenticator() {
+                override fun getPasswordAuthentication(): PasswordAuthentication {
+                    return PasswordAuthentication(senderEmail, senderPassword)
+                }
+            })
+
+            try {
+                val message = MimeMessage(session).apply {
+                    setFrom(InternetAddress(senderEmail))
+                    addRecipient(Message.RecipientType.TO, InternetAddress(email))
+                    subject = "[E2Music] Xác minh địa chỉ email của bạn"
+
+                    val emailContent = """
+                        <html>
+                        <body style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">
+                            <p>Xin chào <b>$fullname</b>,</p>
+                            <p>Cảm ơn bạn đã đăng ký tài khoản trên <b>E2Music</b>! Để hoàn tất quá trình đăng ký và bảo vệ tài khoản của bạn, vui lòng nhập mã xác nhận dưới đây:</p>
+                            <p style="font-size: 18px; font-weight: bold; color: #d32f2f;">✨ Mã xác nhận của bạn: <span style="font-size: 22px;">$verificationCode</span></p>
+                            <p>Mã này có hiệu lực trong <b>10 phút</b>. Nếu bạn không yêu cầu mã này, vui lòng bỏ qua email này.</p>
+                            <p>Nếu có bất kỳ vấn đề nào, hãy liên hệ với chúng tôi qua <a href="mailto:phankhacmanh2n@gmail.com">phankhacmanh2n@gmail.com</a>.</p>
+                            <p>🎵 <b>E2Music – Trải nghiệm âm nhạc không giới hạn!</b></p>
+                        </body>
+                        </html>
+                    """.trimIndent()
+
+                    setContent(emailContent, "text/html; charset=UTF-8")
+                }
+
+                Transport.send(message)
+                Log.e("EManh Debug", "Send To Mail: Email sent successfully!")
+            } catch (e: MessagingException) {
+                e.printStackTrace()
+                Log.e("EManh Debug", "Send To Mail: Email was sent unsuccessfully!")
+            }
+        }
+    }
+
+    private fun generateVerificationCode(): String {
+        return (10000..99999).random().toString()
     }
 }
