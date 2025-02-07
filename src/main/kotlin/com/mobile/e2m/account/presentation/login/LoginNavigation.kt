@@ -1,0 +1,26 @@
+package com.mobile.e2m.account.presentation.login
+
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
+import com.mobile.e2m.core.ui.navigation.route.DestinationRoute.AccountRoute
+
+internal fun NavController.goToLogin(vararg popUpDestinations: String) {
+    this.navigate(route = AccountRoute.LOGIN) {
+        popUpDestinations.forEach { destination ->
+            popUpTo(destination) { inclusive = true }
+        }
+    }
+}
+
+internal fun NavGraphBuilder.loginDestination(
+    goToForgotPassword: () -> Unit = { },
+    goToRegister: () -> Unit = { },
+) {
+    composable(AccountRoute.LOGIN) {
+        LoginScreen(
+            goToForgotPassword = { goToForgotPassword() },
+            goToRegister = { goToRegister() },
+        )
+    }
+}
