@@ -1,5 +1,6 @@
 package com.mobile.e2m.account.presentation.registerAccount.register
 
+import com.mobile.e2m.account.model.UsersModel
 import com.mobile.e2m.core.ui.R
 
 sealed interface RegisterAction {
@@ -12,6 +13,10 @@ sealed interface RegisterAction {
     data class OnNewPasswordTyped(val newPassword: String) : RegisterAction
     data class OnConfirmPasswordTyped(val confirmPassword: String) : RegisterAction
     data class OnPasscodeTyped(val passcode: String) : RegisterAction
+
+    sealed class Internal : RegisterAction {
+        data class HandleUsersData(val usersData: List<UsersModel>?) : Internal()
+    }
 }
 
 data class RegisterState(
@@ -31,8 +36,17 @@ data class RegisterState(
     val newPasswordError: Int? = null,
     val confirmPasswordError: Int? = null,
     val passcodeError: Int? = null,
-    val openDialog: Boolean = true
-)
+    val openDialog: Boolean = true,
+    val viewState: ViewState,
+) {
+    sealed interface ViewState {
+        data object Loading : ViewState
+
+        data class Content(
+            val newsData: List<UsersModel>?,
+        ) : ViewState
+    }
+}
 
 sealed interface RegisterEvent {
     data class GoToRegistrationSuccess(val openDialog: Boolean) : RegisterEvent

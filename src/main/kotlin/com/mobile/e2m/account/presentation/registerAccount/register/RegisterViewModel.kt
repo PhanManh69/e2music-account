@@ -1,19 +1,51 @@
 package com.mobile.e2m.account.presentation.registerAccount.register
 
+import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.viewModelScope
+import com.mobile.e2m.account.domain.repository.UsersRepository
+import com.mobile.e2m.account.domain.usecase.GetUsersUseCase
+import com.mobile.e2m.core.datasource.local.room.entity.UsersEntity
 import com.mobile.e2m.core.ui.R
 import com.mobile.e2m.core.ui.base.E2MBaseViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class RegisterViewModel : E2MBaseViewModel<RegisterState, RegisterEvent, RegisterAction>(
-    initialState = RegisterState()
+class RegisterViewModel(
+    getUsersUseCase: GetUsersUseCase,
+    private val usersRepository: UsersRepository,
+) : E2MBaseViewModel<RegisterState, RegisterEvent, RegisterAction>(
+    initialState = RegisterState(
+        viewState = RegisterState.ViewState.Loading
+    )
 ) {
 
     private var countdownJob: Job? = null
+    private var existingUsernames: List<String> = listOf()
+    private var existingEmails: List<String> = listOf()
+
+    init {
+        getUsersUseCase
+            .invoke()
+            .map { usersList ->
+                val usernames = usersList.map { it.username }
+                val emails = usersList.map { it.email }
+                usernames to emails
+            }
+            .onEach { (usernames, emails) ->
+                existingUsernames = usernames
+                existingEmails = emails
+
+                Log.d("EManh Debug", "Existing Usernames: ${existingUsernames.joinToString(", ")}")
+                Log.d("EManh Debug", "Existing Emails: ${existingEmails.joinToString(", ")}")
+            }
+            .launchIn(viewModelScope)
+    }
 
     override fun handleAction(action: RegisterAction) {
         when (action) {
@@ -26,6 +58,19 @@ class RegisterViewModel : E2MBaseViewModel<RegisterState, RegisterEvent, Registe
             is RegisterAction.OnNewPasswordTyped -> handleOnNewPasswordTyped(action.newPassword)
             is RegisterAction.OnConfirmPasswordTyped -> handleOnConfirmPasswordTyped(action.confirmPassword)
             is RegisterAction.OnPasscodeTyped -> handleOnPasscodeTyped(action.passcode)
+            is RegisterAction.Internal -> handleInternalAction(action)
+        }
+    }
+
+    private fun handleInternalAction(action: RegisterAction.Internal) {
+        when (action) {
+            is RegisterAction.Internal.HandleUsersData -> {
+                mutableStateFlow.update {
+                    it.copy(
+                        viewState = RegisterState.ViewState.Content(action.usersData)
+                    )
+                }
+            }
         }
     }
 
@@ -133,7 +178,21 @@ class RegisterViewModel : E2MBaseViewModel<RegisterState, RegisterEvent, Registe
                 )
             }
 
-            sendEvent(RegisterEvent.GoToRegistrationSuccess(openDialog = openDialog))
+            val newUser = UsersEntity(
+                username = mutableStateFlow.value.username,
+                fullname = mutableStateFlow.value.fullname,
+                email = mutableStateFlow.value.email,
+                password = mutableStateFlow.value.newPassword,
+            )
+
+            val userId = usersRepository.insertUser(newUser)
+
+            if (userId > 0) {
+                sendEvent(RegisterEvent.GoToRegistrationSuccess(openDialog = openDialog))
+                Log.e("EManh Debug", "Register Account: Registration success!")
+            } else {
+                Log.e("EManh Debug", "Register Account: Registration failed!")
+            }
         }
     }
 
@@ -250,10 +309,6 @@ class RegisterViewModel : E2MBaseViewModel<RegisterState, RegisterEvent, Registe
     }
 
     private fun checkUsername(username: String): Pair<Int?, Boolean> {
-        val existingUsernames = listOf(
-            "phanmanh",
-        )
-
         return when {
             username.isBlank() -> R.string.errorEmptyUsername to false
             username.length < 6 || username.length > 18 -> R.string.errorWrongFormatUsername to false
@@ -277,10 +332,6 @@ class RegisterViewModel : E2MBaseViewModel<RegisterState, RegisterEvent, Registe
     }
 
     private fun checkEmail(email: String): Pair<Int?, Boolean> {
-        val existingEmails = listOf(
-            "phanmanh@gmail.com",
-        )
-
         return when {
             email.isBlank() -> R.string.errorEmptyEmail to false
             !Patterns.EMAIL_ADDRESS.matcher(email)
