@@ -6,6 +6,14 @@ import kotlinx.coroutines.flow.Flow
 interface UsersRepository {
     fun getUsers(): Flow<List<UsersEntity>>
 
+    fun getUsername(): Flow<List<String>>
+
+    fun getEmail(): Flow<List<String>>
+
+    fun getUserByEmailOrUsername(emailAccount: String): Flow<List<UsersEntity>>
+
+    suspend fun updatePassword(id: Int, newPassword: String): Int
+
     suspend fun insertUser(user: UsersEntity): Long
 
     suspend fun updateUser(user: UsersEntity): Int

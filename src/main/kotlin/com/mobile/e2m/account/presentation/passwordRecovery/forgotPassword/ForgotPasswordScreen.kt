@@ -41,7 +41,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 internal fun ForgotPasswordScreen(
     goBack: () -> Unit = { },
-    goToResetPassword: () -> Unit = { },
+    goToResetPassword: (Int) -> Unit = { },
     viewModel: ForgotPasswordViewModel = koinViewModel()
 ) {
     val state by viewModel.stateFlow.collectAsState()
@@ -49,7 +49,7 @@ internal fun ForgotPasswordScreen(
 
     EventsEffect(viewModel) { event ->
         when (event) {
-            ForgotPasswordEvent.GoToResetPasswordScreen -> goToResetPassword()
+            is ForgotPasswordEvent.GoToResetPasswordScreen -> goToResetPassword(event.userId)
         }
     }
 

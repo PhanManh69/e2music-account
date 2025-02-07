@@ -4,7 +4,6 @@ import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.viewModelScope
 import com.mobile.e2m.account.domain.repository.UsersRepository
-import com.mobile.e2m.account.domain.usecase.GetUsersUseCase
 import com.mobile.e2m.core.datasource.local.room.entity.UsersEntity
 import com.mobile.e2m.core.ui.R
 import com.mobile.e2m.core.ui.base.E2MBaseViewModel
@@ -12,9 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Properties
@@ -28,7 +25,6 @@ import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
 
 class RegisterViewModel(
-    getUsersUseCase: GetUsersUseCase,
     private val usersRepository: UsersRepository,
 ) : E2MBaseViewModel<RegisterState, RegisterEvent, RegisterAction>(
     initialState = RegisterState(
@@ -42,17 +38,13 @@ class RegisterViewModel(
     private var verificationCode: String = ""
 
     init {
-        getUsersUseCase.invoke().map { usersList ->
-            val usernames = usersList.map { it.username }
-            val emails = usersList.map { it.email }
-            usernames to emails
-        }.onEach { (usernames, emails) ->
-            existingUsernames = usernames
-            existingEmails = emails
+        viewModelScope.launch {
+            existingUsernames = usersRepository.getUsername().first()
+            existingEmails = usersRepository.getEmail().first()
 
-            Log.d("EManh Debug", "Existing Usernames: ${existingUsernames.joinToString(", ")}")
-            Log.d("EManh Debug", "Existing Emails: ${existingEmails.joinToString(", ")}")
-        }.launchIn(viewModelScope)
+            Log.d("EManh Debug", "Existing Usernames: $existingUsernames")
+            Log.d("EManh Debug", "Existing Emails: $existingEmails")
+        }
     }
 
     override fun handleAction(action: RegisterAction) {
@@ -423,7 +415,7 @@ class RegisterViewModel(
                         <body style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">
                             <p>Xin chào <b>$fullname</b>,</p>
                             <p>Cảm ơn bạn đã đăng ký tài khoản trên <b>E2Music</b>! Để hoàn tất quá trình đăng ký và bảo vệ tài khoản của bạn, vui lòng nhập mã xác nhận dưới đây:</p>
-                            <p style="font-size: 18px; font-weight: bold; color: #d32f2f;">✨ Mã xác nhận của bạn: <span style="font-size: 22px;">$verificationCode</span></p>
+                            <p style="font-size: 18px; font-weight: bold; color: #d32f2f;">✨ Mã xác nhận của bạn là: <span style="font-size: 22px;">$verificationCode</span></p>
                             <p>Mã này có hiệu lực trong <b>10 phút</b>. Nếu bạn không yêu cầu mã này, vui lòng bỏ qua email này.</p>
                             <p>Nếu có bất kỳ vấn đề nào, hãy liên hệ với chúng tôi qua <a href="mailto:phankhacmanh2n@gmail.com">phankhacmanh2n@gmail.com</a>.</p>
                             <p>🎵 <b>E2Music – Trải nghiệm âm nhạc không giới hạn!</b></p>

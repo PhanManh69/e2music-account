@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,12 +42,19 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 internal fun ResetPasswordScreen(
+    userId: Int? = null,
     goBack: () -> Unit = { },
     goToLogin: () -> Unit = { },
     viewModel: ResetPasswordViewModel = koinViewModel()
 ) {
     val state by viewModel.stateFlow.collectAsState()
     val context = LocalContext.current
+
+    LaunchedEffect(userId) {
+        userId?.let {
+            viewModel.setUserId(it)
+        }
+    }
 
     EventsEffect(viewModel) { event ->
         when (event) {

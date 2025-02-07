@@ -46,7 +46,7 @@ fun NavGraphBuilder.accountNavGraph(
             navController.popBackStack()
         },
         goToResetPassword = {
-            navController.goToResetPassword()
+            navController.goToResetPassword(it)
         }
     )
 

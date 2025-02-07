@@ -12,11 +12,11 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val accountModule = module {
-    viewModel { ForgotPasswordViewModel() }
+    viewModel { ForgotPasswordViewModel(get()) }
 
-    viewModel { ResetPasswordViewModel() }
+    viewModel { ResetPasswordViewModel(get()) }
 
-    viewModel { RegisterViewModel(get(), get()) } bind RegisterViewModel::class
+    viewModel { RegisterViewModel(get()) }
 
     single { GetUsersUseCaseImpl(get()) } bind GetUsersUseCase::class
 

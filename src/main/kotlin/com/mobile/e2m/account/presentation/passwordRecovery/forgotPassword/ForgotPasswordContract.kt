@@ -17,8 +17,9 @@ data class ForgotPasswordState(
     val passcode: String = "",
     val emailAccountError: Int? = null,
     val passcodeError: Int? = null,
+    val userId: Int? = null,
 )
 
 sealed interface ForgotPasswordEvent {
-    data object GoToResetPasswordScreen : ForgotPasswordEvent
+    data class GoToResetPasswordScreen(val userId: Int) : ForgotPasswordEvent
 }

@@ -12,6 +12,7 @@ data class ResetPasswordState(
     val confirmPassword: String = "",
     val newPasswordError: Int? = null,
     val confirmPasswordError: Int? = null,
+    val userId: Int? = null,
 )
 
 sealed interface ResetPasswordEvent {

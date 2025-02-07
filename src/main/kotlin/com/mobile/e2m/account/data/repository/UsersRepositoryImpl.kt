@@ -14,7 +14,28 @@ class UsersRepositoryImpl(
         emit(usersList)
     }
 
-    override suspend fun insertUser(user: UsersEntity): Long = usersLocalDataSource.insertUsers(user)
+    override fun getUsername(): Flow<List<String>> = flow {
+        val usernameList = usersLocalDataSource.getUsername()
+        emit(usernameList)
+    }
+
+    override fun getEmail(): Flow<List<String>> = flow {
+        val emailList = usersLocalDataSource.getEmail()
+        emit(emailList)
+    }
+
+    override fun getUserByEmailOrUsername(
+        emailAccount: String,
+    ): Flow<List<UsersEntity>> = flow {
+        val userList = usersLocalDataSource.getUsersByEmailOrUsername(emailAccount)
+        emit(userList)
+    }
+
+    override suspend fun updatePassword(id: Int, newPassword: String): Int =
+        usersLocalDataSource.updatePassword(id = id, newPassword = newPassword)
+
+    override suspend fun insertUser(user: UsersEntity): Long =
+        usersLocalDataSource.insertUsers(user)
 
     override suspend fun updateUser(user: UsersEntity): Int = usersLocalDataSource.updateUsers(user)
 
