@@ -19,7 +19,7 @@ import com.mobile.e2m.core.ui.navigation.route.AppNavigationRoute
 
 fun NavGraphBuilder.accountNavGraph(
     navController: NavHostController,
-    onAccount: () -> Unit,
+    onAccount: (Int) -> Unit,
 ) {
     beginDestination(
         goToStarted = {

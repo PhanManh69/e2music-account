@@ -1,5 +1,6 @@
 package com.mobile.e2m.account.presentation.login
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -15,9 +16,12 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextAlign
 import com.mobile.e2m.account.R
@@ -26,6 +30,9 @@ import com.mobile.e2m.account.presentation.login.composable.LoginInputField
 import com.mobile.e2m.account.presentation.login.composable.LoginNoAccountRegister
 import com.mobile.e2m.account.presentation.login.composable.LoginOtherMethodButton
 import com.mobile.e2m.account.presentation.login.composable.LoginOtherMethodLayout
+import com.mobile.e2m.account.presentation.passwordRecovery.forgotPassword.ForgotPasswordAction
+import com.mobile.e2m.account.presentation.passwordRecovery.forgotPassword.ForgotPasswordEvent
+import com.mobile.e2m.account.presentation.passwordRecovery.forgotPassword.ForgotPasswordViewModel
 import com.mobile.e2m.core.ui.composable.E2MButton
 import com.mobile.e2m.core.ui.composable.E2MButtonStyle.Gradient
 import com.mobile.e2m.core.ui.composable.E2MHeader
@@ -33,16 +40,50 @@ import com.mobile.e2m.core.ui.composable.E2MScaffold
 import com.mobile.e2m.core.ui.composable.background.E2MBackgroundDark
 import com.mobile.e2m.core.ui.composable.debounceClickable
 import com.mobile.e2m.core.ui.theme.E2MTheme
+import com.mobile.e2m.core.ui.util.EventsEffect
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 internal fun LoginScreen(
-    goToMain: () -> Unit = { },
+    goToMain: (Int) -> Unit = { },
     goToForgotPassword: () -> Unit = { },
     goToRegister: () -> Unit = { },
+    viewModel: LoginViewModel = koinViewModel()
 ) {
+    val state by viewModel.stateFlow.collectAsState()
+    val context = LocalContext.current
+
+    EventsEffect(viewModel) { event ->
+        when (event) {
+            is LoginEvent.GoToMainScreen -> goToMain(event.userId)
+
+            is LoginEvent.FocusInputFieldChange -> {
+                Log.e("EManh Debug", "Check Focus: ${event.isFocus}")
+                if (!event.isFocus) {
+                    viewModel.trySendAction(LoginAction.GetPassword)
+                }
+            }
+        }
+    }
+
     LoginScaffold(
+        emailAccount = state.emailAccount,
+        password = state.password,
+        emailAccountError = state.emailAccountError?.let { context.getString(it) },
+        passwordError = state.passwordError?.let { context.getString(it) },
+        onFocusChanged = remember(viewModel) {
+            {
+                viewModel.trySendAction(LoginAction.OnFocusChange(it))
+            }
+        },
+        onEmailAccTyped = { value, _ ->
+            viewModel.trySendAction(LoginAction.OnEmailAccountTyped(value))
+        },
+        onPasswordTyped = { value, _ ->
+            viewModel.trySendAction(LoginAction.OnPasswordTyped(value))
+        },
         loginOnClick = {
-            goToMain()
+            viewModel.trySendAction(LoginAction.LoginClick)
         },
         forgotPasswordOnClick = {
             goToForgotPassword()
@@ -56,6 +97,13 @@ internal fun LoginScreen(
 @Composable
 private fun LoginScaffold(
     modifier: Modifier = Modifier,
+    emailAccount: String = "",
+    password: String = "",
+    emailAccountError: String? = null,
+    passwordError: String? = null,
+    onFocusChanged: (Boolean) -> Unit,
+    onEmailAccTyped: (String, String?) -> Unit = { _, _ -> },
+    onPasswordTyped: (String, String?) -> Unit = { _, _ -> },
     loginOnClick: () -> Unit = { },
     loginGoogleOnClick: () -> Unit = { },
     loginFacebookOnClick: () -> Unit = { },
@@ -84,6 +132,13 @@ private fun LoginScaffold(
             },
             content = {
                 LoginContent(
+                    emailAccount = emailAccount,
+                    password = password,
+                    emailAccountError = emailAccountError,
+                    passwordError = passwordError,
+                    onFocusChanged = onFocusChanged,
+                    onEmailAccTyped = onEmailAccTyped,
+                    onPasswordTyped = onPasswordTyped,
                     loginOnClick = { loginOnClick() },
                     loginGoogleOnClick = { loginGoogleOnClick() },
                     loginFacebookOnClick = { loginFacebookOnClick() },
@@ -99,6 +154,13 @@ private fun LoginScaffold(
 @Composable
 private fun LoginContent(
     modifier: Modifier = Modifier,
+    emailAccount: String = "",
+    password: String = "",
+    emailAccountError: String? = null,
+    passwordError: String? = null,
+    onFocusChanged: (Boolean) -> Unit,
+    onEmailAccTyped: (String, String?) -> Unit = { _, _ -> },
+    onPasswordTyped: (String, String?) -> Unit = { _, _ -> },
     loginOnClick: () -> Unit = { },
     loginGoogleOnClick: () -> Unit = { },
     loginFacebookOnClick: () -> Unit = { },
@@ -132,6 +194,13 @@ private fun LoginContent(
             verticalArrangement = Arrangement.spacedBy(size.spacing.largeX),
         ) {
             LoginInputField(
+                emailAccount = emailAccount,
+                password = password,
+                emailAccountError = emailAccountError,
+                passwordError = passwordError,
+                onFocusChanged = onFocusChanged,
+                onEmailAccTyped = onEmailAccTyped,
+                onPasswordTyped = onPasswordTyped,
                 goToHome = { loginOnClick() }
             )
 

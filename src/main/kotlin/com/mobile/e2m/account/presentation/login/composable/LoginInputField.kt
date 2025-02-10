@@ -1,5 +1,6 @@
 package com.mobile.e2m.account.presentation.login.composable
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -22,18 +23,26 @@ import com.mobile.e2m.core.ui.theme.E2MTheme
 
 @Composable
 internal fun LoginInputField(
+    emailAccount: String = "",
+    password: String = "",
+    emailAccountError: String? = null,
+    passwordError: String? = null,
+    onFocusChanged: (Boolean) -> Unit,
+    onEmailAccTyped: (String, String?) -> Unit = { _, _ -> },
+    onPasswordTyped: (String, String?) -> Unit = { _, _ -> },
     goToHome: () -> Unit = { },
 ) {
-    val enterAccountEmail = remember { mutableStateOf("") }
-    val enterPassword = remember { mutableStateOf("") }
-
     var isPasswordVisible by remember { mutableStateOf(false) }
 
     Column {
         E2MTextField(
-            initText = enterAccountEmail.value,
-            onValueChange = { enterAccountEmail.value = it },
+            initText = emailAccount,
+            onValueChange = { onEmailAccTyped(it, emailAccountError) },
             placeholder = getString().enterAccountEmailTxt,
+            caption = emailAccountError,
+            onFocusChanged = {
+                onFocusChanged.invoke(it.hasFocus)
+            },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
@@ -43,9 +52,10 @@ internal fun LoginInputField(
         Spacer(modifier = Modifier.height(E2MTheme.alias.size.spacing.large))
 
         E2MTextField(
-            initText = enterPassword.value,
-            onValueChange = { enterPassword.value = it },
+            initText = password,
+            onValueChange = { onPasswordTyped(it, passwordError) },
             placeholder = getString().enterPasswordTxt,
+            caption = passwordError,
             iconId = if (isPasswordVisible) R.drawable.ic_hide_password else R.drawable.ic_display_password,
             visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIconOnClick = {

@@ -14,13 +14,13 @@ internal fun NavController.goToLogin(vararg popUpDestinations: AppNavigationRout
 }
 
 internal fun NavGraphBuilder.loginDestination(
-    goToMain: () -> Unit = { },
+    goToMain: (Int) -> Unit = { },
     goToForgotPassword: () -> Unit = { },
     goToRegister: () -> Unit = { },
 ) {
     composable<AppNavigationRoute.Account.Login> {
         LoginScreen(
-            goToMain = { goToMain() },
+            goToMain = { goToMain(it) },
             goToForgotPassword = { goToForgotPassword() },
             goToRegister = { goToRegister() },
         )
