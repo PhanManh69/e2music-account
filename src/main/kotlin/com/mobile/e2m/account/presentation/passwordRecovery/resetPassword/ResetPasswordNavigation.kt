@@ -5,10 +5,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.mobile.e2m.core.ui.navigation.route.DestinationRoute.AccountRoute
+import com.mobile.e2m.core.ui.navigation.route.AppNavigationRoute
 
 internal fun NavController.goToResetPassword(userId: Int) {
-    this.navigate(route = "${AccountRoute.RESET_PASSWORD}/$userId")
+    this.navigate(route = AppNavigationRoute.Account.ResetPassword(userId).toRoute())
 }
 
 internal fun NavGraphBuilder.resetPasswordDestination(
@@ -16,7 +16,7 @@ internal fun NavGraphBuilder.resetPasswordDestination(
     goToLogin: () -> Unit = { },
 ) {
     composable(
-        route = "${AccountRoute.RESET_PASSWORD}/{userId}",
+        route = AppNavigationRoute.Account.ResetPassword.ROUTE,
         arguments = listOf(navArgument("userId") { type = NavType.IntType })
     ) {
         val userId = it.arguments?.getInt("userId") ?: -1

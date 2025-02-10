@@ -40,8 +40,6 @@ class ForgotPasswordViewModel(
 
             Log.d("EManh Debug", "Existing Usernames: $existingUsernames")
             Log.d("EManh Debug", "Existing Emails: $existingEmails")
-
-
         }
     }
 
