@@ -36,10 +36,14 @@ import com.mobile.e2m.core.ui.theme.E2MTheme
 
 @Composable
 internal fun LoginScreen(
+    goToMain: () -> Unit = { },
     goToForgotPassword: () -> Unit = { },
     goToRegister: () -> Unit = { },
 ) {
     LoginScaffold(
+        loginOnClick = {
+            goToMain()
+        },
         forgotPasswordOnClick = {
             goToForgotPassword()
         },

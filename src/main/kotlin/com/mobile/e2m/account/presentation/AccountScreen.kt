@@ -17,8 +17,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.mobile.e2m.account.navigation.accountNavGraph
+import com.mobile.e2m.account.router.AccountRouter
 import com.mobile.e2m.core.ui.R
-import com.mobile.e2m.core.ui.navigation.route.DestinationRoute.AccountRoute
+import com.mobile.e2m.core.ui.navigation.route.AppNavigationRoute
+import org.koin.compose.koinInject
 
 @Immutable
 data class GetStrings(
@@ -97,11 +99,12 @@ internal fun getString(): GetStrings {
 
 @Composable
 fun AccountScreen(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    accountRouter: AccountRouter = koinInject(),
 ) {
     NavHost(
         navController = navController,
-        startDestination = AccountRoute.BEGIN,
+        startDestination = AppNavigationRoute.Account.Begin,
         modifier = Modifier
             .consumeWindowInsets(WindowInsets.navigationBars.only(WindowInsetsSides.Vertical))
             .consumeWindowInsets(WindowInsets.ime),
@@ -127,7 +130,10 @@ fun AccountScreen(
         },
     ) {
         accountNavGraph(
-            navController = navController
+            navController = navController,
+            onAccount = {
+                accountRouter.onAccount()
+            }
         )
     }
 }

@@ -15,14 +15,17 @@ import com.mobile.e2m.account.presentation.registerAccount.registrationSuccessfu
 import com.mobile.e2m.account.presentation.registerAccount.registrationSuccessful.registrationSuccessfulDestination
 import com.mobile.e2m.account.presentation.started.goToStarted
 import com.mobile.e2m.account.presentation.started.startedDestination
-import com.mobile.e2m.core.ui.navigation.route.DestinationRoute.AccountRoute
+import com.mobile.e2m.core.ui.navigation.route.AppNavigationRoute
 
 fun NavGraphBuilder.accountNavGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    onAccount: () -> Unit,
 ) {
     beginDestination(
         goToStarted = {
-            navController.goToStarted()
+            navController.goToStarted(
+                AppNavigationRoute.Account.Begin
+            )
         }
     )
 
@@ -33,6 +36,7 @@ fun NavGraphBuilder.accountNavGraph(
     )
 
     loginDestination(
+        goToMain = onAccount,
         goToForgotPassword = {
             navController.goToForgotPassword()
         },
@@ -56,7 +60,8 @@ fun NavGraphBuilder.accountNavGraph(
         },
         goToLogin = {
             navController.goToLogin(
-                AccountRoute.FORGOT_PASSWORD, AccountRoute.LOGIN
+                AppNavigationRoute.Account.ForgotPassword,
+                AppNavigationRoute.Account.Login,
             )
         }
     )
@@ -67,7 +72,7 @@ fun NavGraphBuilder.accountNavGraph(
         },
         goToRegistrationSuccess = {
             navController.goToRegistrationSuccessful(
-                AccountRoute.REGISTER
+                AppNavigationRoute.Account.Register
             )
         }
     )
@@ -75,7 +80,8 @@ fun NavGraphBuilder.accountNavGraph(
     registrationSuccessfulDestination(
         goToLogin = {
             navController.goToLogin(
-                AccountRoute.REGISTRATION_SUCCESSFUL, AccountRoute.LOGIN
+                AppNavigationRoute.Account.RegistrationSuccessful,
+                AppNavigationRoute.Account.Login,
             )
         }
     )

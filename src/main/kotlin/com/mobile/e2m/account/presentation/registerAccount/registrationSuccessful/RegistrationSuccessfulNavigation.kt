@@ -3,10 +3,10 @@ package com.mobile.e2m.account.presentation.registerAccount.registrationSuccessf
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.mobile.e2m.core.ui.navigation.route.DestinationRoute.AccountRoute
+import com.mobile.e2m.core.ui.navigation.route.AppNavigationRoute
 
-internal fun NavController.goToRegistrationSuccessful(vararg popUpDestinations: String) {
-    this.navigate(route = AccountRoute.REGISTRATION_SUCCESSFUL) {
+internal fun NavController.goToRegistrationSuccessful(vararg popUpDestinations: AppNavigationRoute) {
+    this.navigate(route = AppNavigationRoute.Account.RegistrationSuccessful) {
         popUpDestinations.forEach { destination ->
             popUpTo(destination) { inclusive = true }
         }
@@ -16,7 +16,7 @@ internal fun NavController.goToRegistrationSuccessful(vararg popUpDestinations: 
 internal fun NavGraphBuilder.registrationSuccessfulDestination(
     goToLogin: () -> Unit = { },
 ) {
-    composable(AccountRoute.REGISTRATION_SUCCESSFUL) {
+    composable<AppNavigationRoute.Account.RegistrationSuccessful> {
         RegistrationSuccessfulScreen(
             goToLogin = { goToLogin() }
         )
