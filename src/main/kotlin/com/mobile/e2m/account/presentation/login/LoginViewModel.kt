@@ -3,7 +3,6 @@ package com.mobile.e2m.account.presentation.login
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mobile.e2m.account.domain.repository.UsersRepository
-import com.mobile.e2m.account.presentation.passwordRecovery.forgotPassword.ForgotPasswordEvent
 import com.mobile.e2m.core.ui.R
 import com.mobile.e2m.core.ui.base.E2MBaseViewModel
 import kotlinx.coroutines.flow.first

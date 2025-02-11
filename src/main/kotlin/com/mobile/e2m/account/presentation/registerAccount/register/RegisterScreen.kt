@@ -156,7 +156,7 @@ private fun RegisterScaffold(
             topBar = {
                 E2MHeader(
                     title = getString().registerTxt,
-                    iconId = R.drawable.ic_angle_left,
+                    leadingIconId = R.drawable.ic_angle_left,
                     leadingIconOnClick = { goBack() }
                 )
             },

@@ -111,7 +111,7 @@ private fun ForgotPasswordScaffold(
             topBar = {
                 E2MHeader(
                     title = getString().forgotPasswordTxt,
-                    iconId = R.drawable.ic_angle_left,
+                    leadingIconId = R.drawable.ic_angle_left,
                     leadingIconOnClick = { goBack() }
                 )
             },

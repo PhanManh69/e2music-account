@@ -30,9 +30,6 @@ import com.mobile.e2m.account.presentation.login.composable.LoginInputField
 import com.mobile.e2m.account.presentation.login.composable.LoginNoAccountRegister
 import com.mobile.e2m.account.presentation.login.composable.LoginOtherMethodButton
 import com.mobile.e2m.account.presentation.login.composable.LoginOtherMethodLayout
-import com.mobile.e2m.account.presentation.passwordRecovery.forgotPassword.ForgotPasswordAction
-import com.mobile.e2m.account.presentation.passwordRecovery.forgotPassword.ForgotPasswordEvent
-import com.mobile.e2m.account.presentation.passwordRecovery.forgotPassword.ForgotPasswordViewModel
 import com.mobile.e2m.core.ui.composable.E2MButton
 import com.mobile.e2m.core.ui.composable.E2MButtonStyle.Gradient
 import com.mobile.e2m.core.ui.composable.E2MHeader
@@ -127,7 +124,7 @@ private fun LoginScaffold(
             topBar = {
                 E2MHeader(
                     title = getString().loginTxt,
-                    iconId = R.drawable.ic_home
+                    leadingIconId = R.drawable.ic_home
                 )
             },
             content = {

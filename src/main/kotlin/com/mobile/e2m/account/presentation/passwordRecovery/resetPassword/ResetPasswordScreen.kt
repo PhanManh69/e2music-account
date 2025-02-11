@@ -108,7 +108,7 @@ private fun ResetPasswordScaffold(
             topBar = {
                 E2MHeader(
                     title = getString().resetPasswordTxt,
-                    iconId = R.drawable.ic_angle_left,
+                    leadingIconId = R.drawable.ic_angle_left,
                     leadingIconOnClick = { goBack() }
                 )
             },
