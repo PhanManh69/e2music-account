@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.mobile.e2m.account.R
+import com.mobile.e2m.core.ui.R
 import com.mobile.e2m.account.presentation.getString
 import com.mobile.e2m.core.ui.composable.E2MButton
 import com.mobile.e2m.core.ui.theme.E2MTheme

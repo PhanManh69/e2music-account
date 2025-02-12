@@ -28,7 +28,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import com.mobile.e2m.account.R
+import com.mobile.e2m.core.ui.R
 import com.mobile.e2m.account.presentation.getString
 import com.mobile.e2m.core.ui.composable.E2MButton
 import com.mobile.e2m.core.ui.composable.E2MButtonStyle.Gradient

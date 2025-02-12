@@ -15,13 +15,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.svg.SvgDecoder
-import com.mobile.e2m.account.R
 import com.mobile.e2m.account.presentation.getString
+import com.mobile.e2m.core.ui.R
+import com.mobile.e2m.core.ui.composable.E2MAsyncImage
 import com.mobile.e2m.core.ui.composable.E2MButton
 import com.mobile.e2m.core.ui.composable.E2MButtonStyle.Gradient
 import com.mobile.e2m.core.ui.theme.E2MTheme
@@ -51,13 +48,9 @@ private fun StartedScaffold(
     Box(
         modifier = modifier.fillMaxSize()
     ) {
-        AsyncImage(
+        E2MAsyncImage(
             modifier = Modifier.fillMaxSize(),
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(R.raw.img_background_started)
-                .decoderFactory(SvgDecoder.Factory())
-                .build(),
-            contentDescription = null,
+            imageId = R.raw.img_background_started,
             contentScale = ContentScale.Crop,
         )
 

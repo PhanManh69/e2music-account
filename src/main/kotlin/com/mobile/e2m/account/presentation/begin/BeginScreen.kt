@@ -8,13 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import coil3.ImageLoader
-import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
-import coil3.request.crossfade
-import com.mobile.e2m.account.R
+import com.mobile.e2m.core.ui.R
+import com.mobile.e2m.core.ui.composable.E2MAsyncImage
 import com.mobile.e2m.core.ui.theme.BackgroundBegin
 import kotlinx.coroutines.delay
 
@@ -49,16 +47,11 @@ private fun BeginScaffold(
             .fillMaxSize()
             .background(BackgroundBegin)
     ) {
-        AsyncImage(
+        E2MAsyncImage(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.Center),
-            model = ImageRequest.Builder(context)
-                .data(R.raw.gif_logo_e2music)
-                .crossfade(true)
-                .build(),
-            contentDescription = null,
-            contentScale = ContentScale.Fit,
+            imageId = R.raw.gif_logo_e2music,
         )
     }
 }
