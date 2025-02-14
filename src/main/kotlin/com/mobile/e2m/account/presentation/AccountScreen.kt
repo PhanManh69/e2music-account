@@ -133,6 +133,9 @@ fun AccountScreen(
             navController = navController,
             onAccount = {
                 accountRouter.onAccount()
+            },
+            onAccountStarted = {
+                accountRouter.onAccount()
             }
         )
     }

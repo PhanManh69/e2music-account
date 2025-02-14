@@ -25,16 +25,15 @@ import com.mobile.e2m.core.ui.theme.E2MTheme
 
 @Composable
 internal fun StartedScreen(
+    goToMain: () -> Unit = { },
     goToLogin: () -> Unit = { },
 ) {
-    var isClickedLogin = true
-
     StartedScaffold(
+        startOnClick = {
+            goToMain()
+        },
         loginOnClick = {
-            if (isClickedLogin) {
-                isClickedLogin = false
-                goToLogin()
-            }
+            goToLogin()
         }
     )
 }

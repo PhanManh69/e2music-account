@@ -14,11 +14,13 @@ internal fun NavController.goToStarted(vararg popUpDestinations: AppNavigationRo
 }
 
 internal fun NavGraphBuilder.startedDestination(
+    goToMain: () -> Unit = { },
     goToLogin: () -> Unit = { },
 ) {
     composable<AppNavigationRoute.Account.Started> {
         StartedScreen(
-            goToLogin = { goToLogin() }
+            goToMain = { goToMain() },
+            goToLogin = { goToLogin() },
         )
     }
 }

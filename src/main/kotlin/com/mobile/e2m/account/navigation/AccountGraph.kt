@@ -20,6 +20,7 @@ import com.mobile.e2m.core.ui.navigation.route.AppNavigationRoute
 fun NavGraphBuilder.accountNavGraph(
     navController: NavHostController,
     onAccount: (Int) -> Unit,
+    onAccountStarted: () -> Unit,
 ) {
     beginDestination(
         goToStarted = {
@@ -30,6 +31,7 @@ fun NavGraphBuilder.accountNavGraph(
     )
 
     startedDestination(
+        goToMain = onAccountStarted,
         goToLogin = {
             navController.goToLogin()
         }
