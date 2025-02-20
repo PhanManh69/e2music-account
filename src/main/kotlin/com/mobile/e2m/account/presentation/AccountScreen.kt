@@ -53,6 +53,8 @@ data class GetStrings(
     val contentAuthenticateOtp2Txt: String,
     val registrationSuccessfulTxt: String,
     val contentRegistrationSuccessfulTxt: String,
+    val resetPasswordSuccessfulTxt: String,
+    val contentResetPasswordSuccessfulTxt: String,
 ) {
     companion object {
         @Composable
@@ -88,6 +90,8 @@ data class GetStrings(
             contentAuthenticateOtp2Txt = context.getString(R.string.contentAuthenticateOtp2),
             registrationSuccessfulTxt = context.getString(R.string.registrationSuccessful),
             contentRegistrationSuccessfulTxt = context.getString(R.string.contentRegistrationSuccessful),
+            resetPasswordSuccessfulTxt = context.getString(R.string.resetPasswordSuccessful),
+            contentResetPasswordSuccessfulTxt = context.getString(R.string.contentResetPasswordSuccessful),
         )
     }
 }
@@ -104,7 +108,7 @@ fun AccountScreen(
 ) {
     NavHost(
         navController = navController,
-        startDestination = AppNavigationRoute.Account.Begin,
+        startDestination = AppNavigationRoute.Account.Started,
         modifier = Modifier
             .consumeWindowInsets(WindowInsets.navigationBars.only(WindowInsetsSides.Vertical))
             .consumeWindowInsets(WindowInsets.ime),

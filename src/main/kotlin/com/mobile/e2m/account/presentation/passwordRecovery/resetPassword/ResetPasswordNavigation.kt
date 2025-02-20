@@ -13,7 +13,7 @@ internal fun NavController.goToResetPassword(userId: Int) {
 
 internal fun NavGraphBuilder.resetPasswordDestination(
     goBack: () -> Unit = { },
-    goToLogin: () -> Unit = { },
+    goToSuccessful: () -> Unit = { },
 ) {
     composable(
         route = AppNavigationRoute.Account.ResetPassword.ROUTE,
@@ -24,7 +24,7 @@ internal fun NavGraphBuilder.resetPasswordDestination(
         ResetPasswordScreen(
             userId = userId,
             goBack = { goBack() },
-            goToLogin = { goToLogin() },
+            goToSuccessful = { goToSuccessful() },
         )
     }
 }

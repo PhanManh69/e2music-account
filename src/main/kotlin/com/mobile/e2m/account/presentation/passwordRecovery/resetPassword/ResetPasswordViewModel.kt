@@ -70,7 +70,7 @@ class ResetPasswordViewModel(
 
             if (result > 0) {
                 Log.e("EManh Debug", "Password updated successfully for userId: $userId")
-                sendEvent(ResetPasswordEvent.GoToLoginScreen)
+                sendEvent(ResetPasswordEvent.GoToSuccessfulScreen)
             } else {
                 Log.e("EManh Debug", "Error: Failed to update password!")
             }

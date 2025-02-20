@@ -16,5 +16,5 @@ data class ResetPasswordState(
 )
 
 sealed interface ResetPasswordEvent {
-    data object GoToLoginScreen : ResetPasswordEvent
+    data object GoToSuccessfulScreen : ResetPasswordEvent
 }

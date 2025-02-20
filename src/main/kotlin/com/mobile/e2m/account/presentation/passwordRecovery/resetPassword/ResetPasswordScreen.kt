@@ -44,7 +44,7 @@ import org.koin.androidx.compose.koinViewModel
 internal fun ResetPasswordScreen(
     userId: Int? = null,
     goBack: () -> Unit = { },
-    goToLogin: () -> Unit = { },
+    goToSuccessful: () -> Unit = { },
     viewModel: ResetPasswordViewModel = koinViewModel()
 ) {
     val state by viewModel.stateFlow.collectAsState()
@@ -58,7 +58,7 @@ internal fun ResetPasswordScreen(
 
     EventsEffect(viewModel) { event ->
         when (event) {
-            ResetPasswordEvent.GoToLoginScreen -> goToLogin()
+            ResetPasswordEvent.GoToSuccessfulScreen -> goToSuccessful()
         }
     }
 
@@ -74,7 +74,7 @@ internal fun ResetPasswordScreen(
             viewModel.trySendAction(ResetPasswordAction.OnConfirmPasswordTyped(value))
         },
         goBack = { goBack() },
-        loginOnClick = {
+        confirmOnClick = {
             viewModel.trySendAction(ResetPasswordAction.ConfirmClick)
         },
     )
@@ -90,7 +90,7 @@ private fun ResetPasswordScaffold(
     onNewPasswordTyped: (String, String?) -> Unit = { _, _ -> },
     onConfirmPasswordTyped: (String, String?) -> Unit = { _, _ -> },
     goBack: () -> Unit = { },
-    loginOnClick: () -> Unit = { },
+    confirmOnClick: () -> Unit = { },
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -120,7 +120,7 @@ private fun ResetPasswordScaffold(
                     confirmPasswordError = confirmPasswordError,
                     onNewPasswordTyped = onNewPasswordTyped,
                     onConfirmPasswordTyped = onConfirmPasswordTyped,
-                    loginOnClick = { loginOnClick() }
+                    confirmOnClick = { confirmOnClick() }
                 )
             }
         )
@@ -136,7 +136,7 @@ private fun ResetPasswordContent(
     confirmPasswordError: String? = null,
     onNewPasswordTyped: (String, String?) -> Unit = { _, _ -> },
     onConfirmPasswordTyped: (String, String?) -> Unit = { _, _ -> },
-    loginOnClick: () -> Unit = { },
+    confirmOnClick: () -> Unit = { },
 ) {
     val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     val size = E2MTheme.alias.size
@@ -185,7 +185,7 @@ private fun ResetPasswordContent(
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(
-                    onDone = { loginOnClick() }
+                    onDone = { confirmOnClick() }
                 )
             )
         }
@@ -195,9 +195,9 @@ private fun ResetPasswordContent(
                 .fillMaxWidth()
                 .padding(bottom = bottomPadding)
                 .align(Alignment.BottomCenter),
-            title = getString().loginTxt,
+            title = getString().confirmTxt,
             style = Gradient,
-            onClick = { loginOnClick() }
+            onClick = { confirmOnClick() }
         )
     }
 }
