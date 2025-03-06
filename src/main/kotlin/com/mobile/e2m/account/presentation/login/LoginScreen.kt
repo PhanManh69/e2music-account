@@ -33,7 +33,7 @@ import com.mobile.e2m.account.presentation.login.composable.LoginOtherMethodLayo
 import com.mobile.e2m.core.ui.composable.E2MButton
 import com.mobile.e2m.core.ui.composable.E2MButtonStyle.Gradient
 import com.mobile.e2m.core.ui.composable.E2MHeader
-import com.mobile.e2m.core.ui.composable.E2MScaffold
+import com.mobile.e2m.core.ui.composable.scaffold.E2MScaffold
 import com.mobile.e2m.core.ui.composable.background.E2MBackgroundDark
 import com.mobile.e2m.core.ui.composable.debounceClickable
 import com.mobile.e2m.core.ui.theme.E2MTheme
